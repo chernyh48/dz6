@@ -1,16 +1,38 @@
+from functools import total_ordering
+
 list_student = []
 list_lecturer = []
 
 
-class Student:
+@total_ordering
+class Comparison:
+    def __init__(self):
+        self.avg = 0
+
+    def __eq__(self, other):
+        if (isinstance(self, Student) and isinstance(other, Student)) or (
+                isinstance(self, Lecturer) and isinstance(other, Lecturer)):
+            return self.avg == other.avg
+        else:
+            return 'Сравнение не возможно!'
+
+    def __lt__(self, other):
+        if (isinstance(self, Student) and isinstance(other, Student)) or (
+                isinstance(self, Lecturer) and isinstance(other, Lecturer)):
+            return self.avg == other.avg
+        else:
+            return 'Сравнение не возможно!'
+
+
+class Student(Comparison):
     def __init__(self, name, surname, gender):
+        super().__init__()
         self.name = name
         self.surname = surname
         self.gender = gender
         self.finished_courses = []
         self.courses_in_progress = []
         self.grades = {}
-        self.avg = 0
         list_student.append(self)
 
     def __str__(self):
@@ -61,7 +83,7 @@ class Reviewer(Mentor):
             return 'Ошибка'
 
 
-class Lecturer(Mentor):
+class Lecturer(Mentor, Comparison):
     def __init__(self, name, surname):
         super().__init__(name, surname)
         self.grades = {}
@@ -72,29 +94,6 @@ class Lecturer(Mentor):
         return f'Имя: \033[38;5;208m{self.name}\033[0;0m\n' \
                f'Фамилия: \033[38;5;208m{self.surname}\033[0;0m\n' \
                f'Средняя оценка за лекции: \033[34;5;208m{self.avg}\033[0;0m\n'
-
-
-def comparison(operand_1, operand_2):
-    if isinstance(operand_1, Student) and isinstance(operand_2, Student):
-        if operand_1.avg == operand_2.avg:
-            print('Средние баллы студентов равны.')
-        elif operand_1.avg > operand_2.avg:
-            print(f'Средний балл студента: {operand_1.name} {operand_1.surname} '
-                  f'выше чем у {operand_2.name} {operand_2.surname}.')
-        elif operand_1.avg < operand_2.avg:
-            print(f'Средний балл студента: {operand_1.name} {operand_1.surname} '
-                  f'ниже чем у {operand_2.name} {operand_2.surname}.')
-    elif isinstance(operand_1, Lecturer) and isinstance(operand_2, Lecturer):
-        if operand_1.avg == operand_2.avg:
-            print('Средние баллы лекторов равны.')
-        elif operand_1.avg > operand_2.avg:
-            print(f'Средний балл лектора: {operand_1.name} {operand_1.surname} '
-                  f'выше чем у {operand_2.name} {operand_2.surname}.')
-        elif operand_1.avg < operand_2.avg:
-            print(f'Средний балл лектора: {operand_1.name} {operand_1.surname} '
-                  f'ниже чем у {operand_2.name} {operand_2.surname}.')
-    else:
-        print('Сравнение невозможно!')
 
 
 # не понимаю зачем в задании написано создать 2 функции, если 1 можно обойтись:
@@ -141,12 +140,12 @@ print(lecturer_2)
 print(reviewer_1)
 print(reviewer_2)
 
-comparison(student_1, student_2)
-comparison(lecturer_1, lecturer_2)
-comparison(student_1, lecturer_2)
-
 print(avg_grades(list_student, 'Python'))
 print(avg_grades(list_lecturer, 'Python'))
 print(avg_grades(list_lecturer, 'SQL'))
 print(avg_grades(list_lecturer, 'Git'))
 print(avg_grades(list_student, 'Git'))
+
+print(lecturer_1 >= lecturer_2)
+print(student_1 == student_2)
+print(student_1 != lecturer_2)
